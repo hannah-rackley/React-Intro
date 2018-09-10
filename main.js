@@ -604,11 +604,16 @@ let blogs = [
 let h = React.createElement;
 
 let page = h('div', {}, 
-    [h('h1', {}, ["React Blogs"]),
+    [h('h1', {}, "React Blogs"),
     h('ul', {}, blogs.map(blog => {
-        return h('li', {}, `${blog.title}: ${blog.body}: Written by user: ${blog.userId}`)
+        return h('li', {}, [
+            h('h2', {}, blog.title),
+            h('p', {}, blog.body),
+            h('h6', {}, `Author User ID: ${blog.userId}`)
+        ])
     })), 
-    h('a', {href: 'https://jsonplaceholder.typicode.com/posts'}, 'Copyright 2018')]
+    h('a', {href: 'https://jsonplaceholder.typicode.com/posts'}, 'Copyright 2018')
+    ]
 );
 
 ReactDOM.render(page, document.querySelector('.react-root'));
