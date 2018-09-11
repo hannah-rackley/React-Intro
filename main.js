@@ -603,18 +603,32 @@ let blogs = [
 
 let h = React.createElement;
 
-let page = h('div', {}, 
-    [h('h1', {}, "React Blogs"),
-    h('ul', {}, blogs.map(blog => {
-        return h('li', {}, [
-            h('h2', {}, blog.title),
-            h('p', {}, blog.body),
-            h('h6', {}, `Author User ID: ${blog.userId}`)
-        ])
-    })), 
-    h('a', {href: 'https://jsonplaceholder.typicode.com/posts'}, 'Copyright 2018')
-    ]
+let Header = () => {
+  return h('h1', {}, "React Blogs");
+}
+
+let BlogRow = props => 
+  h('li', {}, [
+    h('h2', {}, props.blog.title),
+    h('p', {}, props.blog.body),
+    h('h6', {}, `Author User ID: ${props.blog.userId}`)
+  ]);
+
+let BlogList = props => h('ul', {}, 
+  props.blogs.map(blog => 
+    h(BlogRow, { blog })
+  )
 );
 
-ReactDOM.render(page, document.querySelector('.react-root'));
+let Footer = () => { return h('a', { href: 'https://jsonplaceholder.typicode.com/posts' }, 'Copyright 2018')};
+
+let Page = () => {
+  return h('div', {}, [
+    h(Header),
+    h(BlogList, { blogs }), 
+    h(Footer)
+    ])
+}
+
+ReactDOM.render(h(Page), document.querySelector('.react-root'));
 
