@@ -611,7 +611,13 @@ let BlogRow = props =>
   h('li', {}, [
     h('h2', {}, props.blog.title),
     h('p', {}, props.blog.body),
-    h('h6', {}, `Author User ID: ${props.blog.userId}`)
+    h('h6', {}, `Author User ID: ${props.blog.userId}`),
+    h('button', {
+      onClick: () => {
+        blogs = blogs.filter(blog =>  blog.title !== props.blog.title);
+        rerender();
+      },
+    }, 'Delete Me')
   ]);
 
 let BlogList = props => h('ul', {}, 
@@ -628,7 +634,12 @@ let Page = () => {
     h(BlogList, { blogs }), 
     h(Footer)
     ])
+  };
+
+let rerender = () => {
+  ReactDOM.render(
+    h(Page), document.querySelector('.react-root')
+  );
 }
 
-ReactDOM.render(h(Page), document.querySelector('.react-root'));
-
+rerender();
