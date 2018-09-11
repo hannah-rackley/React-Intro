@@ -601,20 +601,42 @@ let blogs = [
     }
   ]
 
+let titles = ["Blogs", "Posts", "Lists", "Thoughts"]
 let h = React.createElement;
 
+let titleIndex = 0;
+
+let ChangeBlogTitle = () => {
+  return h('button', { 
+    onClick: () => {
+      titleIndex = (titleIndex + 1) % titles.length;
+      rerender();
+    }
+  }, 'Change Title');
+}
+
 let Header = () => {
-  return h('h1', {}, "React Blogs");
+  return h('h1', {}, titles[titleIndex]);
 }
 
 let BlogRow = props => 
   h('li', {}, [
     h('h2', {}, props.blog.title),
+    h('button', {
+      onClick: () => {
+        let newBlogs = blogs.map(blog => 
+          (blog.title === props.blog.title) ?
+            Object.assign({}, blog, { title: blog.title + 's'}) : blog
+        )
+        blogs = newBlogs;
+        rerender();
+        }
+    }, 'Modify Title'),
     h('p', {}, props.blog.body),
     h('h6', {}, `Author User ID: ${props.blog.userId}`),
     h('button', {
       onClick: () => {
-        blogs = blogs.filter(blog =>  blog.title !== props.blog.title);
+        blogs = blogs.filter(blog => blog.title !== props.blog.title);
         rerender();
       },
     }, 'Delete Me')
@@ -631,6 +653,7 @@ let Footer = () => { return h('a', { href: 'https://jsonplaceholder.typicode.com
 let Page = () => {
   return h('div', {}, [
     h(Header),
+    h(ChangeBlogTitle),
     h(BlogList, { blogs }), 
     h(Footer)
     ])
