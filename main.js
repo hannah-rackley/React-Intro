@@ -604,17 +604,17 @@ const InitialBlogList = [
 const h = React.createElement;
 
 let Header = (props) => {
-  return h('h1', {}, [props.titles[props.index],
+  return h('h1', { className: 'header' }, [props.titles[props.index],
   h('button', { 
     onClick: () => {
       props.changeTitle(props.titles)
-    }
+    }, className: 'header'
   }, 'Change Title')])
 }
 
 let BlogRow = props => 
-  h('li', {}, [
-    h('h2', {}, props.blog.title),
+  h('div', {}, [
+    h('h2', {}, props.blog.id + '. ' + props.blog.title),
     h('button', {
       onClick: () => {
         props.snakeify(props.blog)
@@ -629,8 +629,8 @@ let BlogRow = props =>
     }, 'Delete Me')
   ]);
 
-let BlogList = props => h('ul', {}, 
-  props.blogs.map(blog => 
+let BlogList = props => h('div', {}, 
+  props.blogs.slice(0, 5).map(blog => 
     h(BlogRow, { blog: blog, removeBlog: props.removeBlog, snakeify: props.snakeify }))
 );
 
