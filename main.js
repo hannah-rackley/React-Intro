@@ -1,4 +1,4 @@
-let blogs = [
+const InitialBlogList = [
     {
       "userId": 1,
       "id": 1,
@@ -601,22 +601,15 @@ let blogs = [
     }
   ]
 
-let titles = ["Blogs", "Posts", "Lists", "Thoughts"]
-let h = React.createElement;
+const h = React.createElement;
 
-let titleIndex = 0;
-
-let ChangeBlogTitle = () => {
-  return h('button', { 
+let Header = (props) => {
+  return h('h1', {}, [props.titles[props.index],
+  h('button', { 
     onClick: () => {
-      titleIndex = (titleIndex + 1) % titles.length;
-      rerender();
+      props.changeTitle(props.titles)
     }
-  }, 'Change Title');
-}
-
-let Header = () => {
-  return h('h1', {}, titles[titleIndex]);
+  }, 'Change Title')])
 }
 
 let BlogRow = props => 
@@ -624,44 +617,60 @@ let BlogRow = props =>
     h('h2', {}, props.blog.title),
     h('button', {
       onClick: () => {
-        let newBlogs = blogs.map(blog => 
-          (blog.title === props.blog.title) ?
-            Object.assign({}, blog, { title: blog.title + 's'}) : blog
-        )
-        blogs = newBlogs;
-        rerender();
-        }
-    }, 'Modify Title'),
+        props.snakeify(props.blog)
+      }
+    }, 'Snakeify'),
     h('p', {}, props.blog.body),
     h('h6', {}, `Author User ID: ${props.blog.userId}`),
     h('button', {
       onClick: () => {
-        blogs = blogs.filter(blog => blog.title !== props.blog.title);
-        rerender();
-      },
+        props.removeBlog(props.blog)
+      }
     }, 'Delete Me')
   ]);
 
 let BlogList = props => h('ul', {}, 
   props.blogs.map(blog => 
-    h(BlogRow, { blog })
-  )
+    h(BlogRow, { blog: blog, removeBlog: props.removeBlog, snakeify: props.snakeify }))
 );
 
 let Footer = () => { return h('a', { href: 'https://jsonplaceholder.typicode.com/posts' }, 'Copyright 2018')};
 
-let Page = () => {
-  return h('div', {}, [
-    h(Header),
-    h(ChangeBlogTitle),
-    h(BlogList, { blogs }), 
-    h(Footer)
-    ])
-  };
+class Homepage extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      blogs: InitialBlogList,
+      storeTitleIndex: 0,
+    }
+  }
+  render() {
+    let RemoveBlog = (props) => {
+      this.setState({
+        blogs : this.state.blogs.filter(blog => blog.title !== props.title)
+        })
+    }
+    let Snakeify = (props) => {
+      this.setState({
+        blogs: this.state.blogs.map(blog => (blog.title === props.title) ? 
+          Object.assign({}, blog, { title: blog.title + 's'}) : blog)})
+    }
+
+    let ChangeTitle = (props) => {
+      this.setState({ storeTitleIndex: ((this.state.storeTitleIndex + 1) % props.length)})
+    }
+
+    return h('div', {}, [
+      h(Header, { index: this.state.storeTitleIndex, titles: ["Blogs", "Posts", "Lists", "Thoughts"], changeTitle: ChangeTitle }),
+      h(BlogList, { blogs: this.state.blogs, removeBlog: RemoveBlog, snakeify: Snakeify }), 
+      h(Footer)
+      ])
+    };
+}
 
 let rerender = () => {
   ReactDOM.render(
-    h(Page), document.querySelector('.react-root')
+    h(Homepage), document.querySelector('.react-root')
   );
 }
 
